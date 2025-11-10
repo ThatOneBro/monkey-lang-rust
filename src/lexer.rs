@@ -45,6 +45,7 @@ impl<'a> Lexer<'a> {
     }
 
     fn read_identifier(&mut self) -> &'a str {
+        // Account for first consumed char
         let start = self.pos - 1;
         while let Some(ch) = self.peek() {
             if ch.is_ascii_alphanumeric() || ch == b'_' {
@@ -57,6 +58,7 @@ impl<'a> Lexer<'a> {
     }
 
     fn read_number(&mut self) -> i32 {
+        // Account for first consumed char
         let start = self.pos - 1;
         while let Some(ch) = self.peek() {
             if ch.is_ascii_digit() {
