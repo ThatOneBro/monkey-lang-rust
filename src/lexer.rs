@@ -65,10 +65,24 @@ impl<'a> Lexer<'a> {
         self.skip_whitespace();
 
         match self.next_char() {
-            Some('=') => Token::from_char(TokenType::Assign, '='),
+            Some('=') => {
+                if let Some(&'=') = self.peek() {
+                    self.next_char();
+                    Token::new(TokenType::Eq, "==".to_string())
+                } else {
+                    Token::from_char(TokenType::Assign, '=')
+                }
+            }
             Some('+') => Token::from_char(TokenType::Plus, '+'),
             Some('-') => Token::from_char(TokenType::Minus, '-'),
-            Some('!') => Token::from_char(TokenType::Bang, '!'),
+            Some('!') => {
+                if let Some(&'=') = self.peek() {
+                    self.next_char();
+                    Token::new(TokenType::NotEq, "!=".to_string())
+                } else {
+                    Token::from_char(TokenType::Bang, '!')
+                }
+            }
             Some('*') => Token::from_char(TokenType::Asterisk, '*'),
             Some('/') => Token::from_char(TokenType::Slash, '/'),
             Some('>') => Token::from_char(TokenType::Gt, '>'),
@@ -118,6 +132,9 @@ if (5 < 10) {
 } else {
     return false;
 }
+
+10 == 10;
+10 != 9;
 "#;
 
         let tests = vec![
@@ -186,6 +203,14 @@ if (5 < 10) {
             (TokenType::False, "false"),
             (TokenType::Semicolon, ";"),
             (TokenType::RBrace, "}"),
+            (TokenType::Int, "10"),
+            (TokenType::Eq, "=="),
+            (TokenType::Int, "10"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Int, "10"),
+            (TokenType::NotEq, "!="),
+            (TokenType::Int, "9"),
+            (TokenType::Semicolon, ";"),
             (TokenType::Eof, ""),
         ];
 
