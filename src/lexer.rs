@@ -67,6 +67,12 @@ impl<'a> Lexer<'a> {
         match self.next_char() {
             Some('=') => Token::from_char(TokenType::Assign, '='),
             Some('+') => Token::from_char(TokenType::Plus, '+'),
+            Some('-') => Token::from_char(TokenType::Minus, '-'),
+            Some('!') => Token::from_char(TokenType::Bang, '!'),
+            Some('*') => Token::from_char(TokenType::Asterisk, '*'),
+            Some('/') => Token::from_char(TokenType::Slash, '/'),
+            Some('>') => Token::from_char(TokenType::Gt, '>'),
+            Some('<') => Token::from_char(TokenType::Lt, '<'),
             Some('(') => Token::from_char(TokenType::LParen, '('),
             Some(')') => Token::from_char(TokenType::RParen, ')'),
             Some('{') => Token::from_char(TokenType::LBrace, '{'),
@@ -104,6 +110,8 @@ let add = fn(x, y) {
 };
 
 let result = add(five, ten);
+!-/*5;
+5 < 10 > 5;
 "#;
 
         let tests = vec![
@@ -142,6 +150,18 @@ let result = add(five, ten);
             (TokenType::Comma, ","),
             (TokenType::Identifier, "ten"),
             (TokenType::RParen, ")"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Bang, "!"),
+            (TokenType::Minus, "-"),
+            (TokenType::Slash, "/"),
+            (TokenType::Asterisk, "*"),
+            (TokenType::Int, "5"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Int, "5"),
+            (TokenType::Lt, "<"),
+            (TokenType::Int, "10"),
+            (TokenType::Gt, ">"),
+            (TokenType::Int, "5"),
             (TokenType::Semicolon, ";"),
             (TokenType::Eof, ""),
         ];
