@@ -1,9 +1,9 @@
 use crate::token::Token;
 
 #[derive(Debug, Clone)]
-pub enum Expression<'a> {
-    Identifier(Token<'a>),
-    Integer(Token<'a>),
+pub enum Expression<'src> {
+    Identifier(Token<'src>),
+    Integer(Token<'src>),
 }
 
 impl Expression<'_> {
@@ -16,14 +16,14 @@ impl Expression<'_> {
 }
 
 #[derive(Debug, Clone)]
-pub enum Statement<'a> {
-    Let(LetStmt<'a>),
+pub enum Statement<'src> {
+    Let(LetStmt<'src>),
 }
 
 #[derive(Debug, Clone)]
-pub struct LetStmt<'a> {
-    pub name: Token<'a>,
-    pub init: Option<Expression<'a>>,
+pub struct LetStmt<'src> {
+    pub name: Token<'src>,
+    pub init: Option<Expression<'src>>,
 }
 
 impl Statement<'_> {
@@ -35,8 +35,8 @@ impl Statement<'_> {
 }
 
 #[derive(Debug, Default, Clone)]
-pub struct Program<'a> {
-    pub statements: Vec<Statement<'a>>,
+pub struct Program<'src> {
+    pub statements: Vec<Statement<'src>>,
 }
 
 impl Program<'_> {

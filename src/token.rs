@@ -1,12 +1,12 @@
 use std::fmt::Display;
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum Token<'a> {
+pub enum Token<'src> {
     Illegal,
     Eof,
 
     // Identifiers, literals
-    Identifier(&'a str),
+    Identifier(&'src str),
     Int(i32),
 
     // Operators
@@ -74,7 +74,7 @@ impl Display for Token<'_> {
     }
 }
 
-pub fn get_identifier_or_keyword<'a>(candidate: &'a str) -> Token<'a> {
+pub fn get_identifier_or_keyword<'src>(candidate: &'src str) -> Token<'src> {
     match candidate {
         "fn" => Token::Function,
         "let" => Token::Let,

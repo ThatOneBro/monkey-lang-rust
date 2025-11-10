@@ -1,13 +1,13 @@
 use crate::token::{Token, get_identifier_or_keyword};
 
 #[derive(Debug, Clone, Copy)]
-pub struct Lexer<'a> {
-    input: &'a [u8],
+pub struct Lexer<'src> {
+    input: &'src [u8],
     pos: usize,
 }
 
-impl<'a> Lexer<'a> {
-    pub fn new(input: &'a str) -> Self {
+impl<'src> Lexer<'src> {
+    pub fn new(input: &'src str) -> Self {
         Lexer {
             input: input.as_bytes(),
             pos: 0,
@@ -45,7 +45,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn read_identifier(&mut self) -> &'a str {
+    fn read_identifier(&mut self) -> &'src str {
         // Account for first consumed char
         let start = self.pos - 1;
         while let Some(ch) = self.peek() {
@@ -72,7 +72,7 @@ impl<'a> Lexer<'a> {
         num_str.parse().unwrap()
     }
 
-    pub fn next_token(&mut self) -> Token<'a> {
+    pub fn next_token(&mut self) -> Token<'src> {
         self.skip_whitespace();
 
         match self.next_char() {
