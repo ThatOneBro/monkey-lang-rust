@@ -1,7 +1,7 @@
 use std::io::{self, BufRead, Write};
 
 use crate::lexer::Lexer;
-use crate::token::TokenType;
+use crate::token::Token;
 
 pub fn start() -> io::Result<()> {
     let mut line = String::new();
@@ -32,7 +32,7 @@ pub fn start() -> io::Result<()> {
             let tok = lexer.next_token();
             println!("{:?}", tok);
 
-            if tok.token_type == TokenType::Eof {
+            if tok == Token::Eof {
                 break;
             }
         }

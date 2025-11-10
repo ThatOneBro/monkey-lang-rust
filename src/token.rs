@@ -1,11 +1,11 @@
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub enum TokenType {
+pub enum Token<'a> {
     Illegal,
     Eof,
 
     // Identifiers, literals
-    Identifier,
-    Int,
+    Identifier(&'a str),
+    Int(i32),
 
     // Operators
     Assign,
@@ -38,37 +38,15 @@ pub enum TokenType {
     Return,
 }
 
-#[derive(Debug, PartialEq, Clone)]
-pub struct Token {
-    pub token_type: TokenType,
-    pub literal: String,
-}
-
-impl Token {
-    pub fn new(token_type: TokenType, literal: String) -> Self {
-        Token {
-            token_type,
-            literal,
-        }
-    }
-
-    pub fn from_char(token_type: TokenType, ch: char) -> Self {
-        Token {
-            token_type,
-            literal: ch.to_string(),
-        }
-    }
-}
-
-pub fn check_identifier_or_keyword(candidate: &str) -> TokenType {
+pub fn get_identifier_or_keyword<'a>(candidate: &'a str) -> Token<'a> {
     match candidate {
-        "fn" => TokenType::Function,
-        "let" => TokenType::Let,
-        "true" => TokenType::True,
-        "false" => TokenType::False,
-        "if" => TokenType::If,
-        "else" => TokenType::Else,
-        "return" => TokenType::Return,
-        _ => TokenType::Identifier,
+        "fn" => Token::Function,
+        "let" => Token::Let,
+        "true" => Token::True,
+        "false" => Token::False,
+        "if" => Token::If,
+        "else" => Token::Else,
+        "return" => Token::Return,
+        _ => Token::Identifier(candidate),
     }
 }
