@@ -1,4 +1,4 @@
-use crate::token::{Token, TokenType};
+use crate::token::{Token, TokenType, check_identifier_or_keyword};
 use std::iter::Peekable;
 use std::str::Chars;
 
@@ -13,7 +13,7 @@ impl<'a> Lexer<'a> {
         }
     }
 
-    fn _peek(&mut self) -> Option<&char> {
+    fn peek(&mut self) -> Option<&char> {
         self.input.peek()
     }
 
@@ -21,7 +21,49 @@ impl<'a> Lexer<'a> {
         self.input.next()
     }
 
+    fn skip_whitespace(&mut self) {
+        while let Some(&ch) = self.peek() {
+            if ch.is_whitespace() {
+                self.next_char();
+            } else {
+                break;
+            }
+        }
+    }
+
+    fn read_identifier(&mut self, first: char) -> String {
+        let mut ident = String::new();
+        ident.push(first);
+
+        while let Some(&ch) = self.peek() {
+            if ch.is_alphabetic() || ch == '_' {
+                ident.push(self.next_char().unwrap());
+            } else {
+                break;
+            }
+        }
+
+        ident
+    }
+
+    fn read_number(&mut self, first: char) -> String {
+        let mut number = String::new();
+        number.push(first);
+
+        while let Some(&ch) = self.peek() {
+            if ch.is_ascii_digit() {
+                number.push(self.next_char().unwrap());
+            } else {
+                break;
+            }
+        }
+
+        number
+    }
+
     pub fn next_token(&mut self) -> Token {
+        self.skip_whitespace();
+
         match self.next_char() {
             Some('=') => Token::from_char(TokenType::Assign, '='),
             Some('+') => Token::from_char(TokenType::Plus, '+'),
@@ -31,6 +73,15 @@ impl<'a> Lexer<'a> {
             Some('}') => Token::from_char(TokenType::RBrace, '}'),
             Some(',') => Token::from_char(TokenType::Comma, ','),
             Some(';') => Token::from_char(TokenType::Semicolon, ';'),
+            Some(ch) if ch.is_alphabetic() || ch == '_' => {
+                let literal = self.read_identifier(ch);
+                let token_type = check_identifier_or_keyword(&literal);
+                Token::new(token_type, literal)
+            }
+            Some(ch) if ch.is_ascii_digit() => {
+                let literal = self.read_number(ch);
+                Token::new(TokenType::Int, literal)
+            }
             Some(ch) => Token::from_char(TokenType::Illegal, ch),
             None => Token::new(TokenType::Eof, String::new()),
         }
@@ -44,16 +95,53 @@ mod tests {
 
     #[test]
     fn test_next_token() {
-        let input = "=+(){},;";
+        let input = r#"
+let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+    x + y;
+};
+
+let result = add(five, ten);
+"#;
 
         let tests = vec![
+            (TokenType::Let, "let"),
+            (TokenType::Identifier, "five"),
             (TokenType::Assign, "="),
-            (TokenType::Plus, "+"),
+            (TokenType::Int, "5"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Let, "let"),
+            (TokenType::Identifier, "ten"),
+            (TokenType::Assign, "="),
+            (TokenType::Int, "10"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Let, "let"),
+            (TokenType::Identifier, "add"),
+            (TokenType::Assign, "="),
+            (TokenType::Function, "fn"),
             (TokenType::LParen, "("),
+            (TokenType::Identifier, "x"),
+            (TokenType::Comma, ","),
+            (TokenType::Identifier, "y"),
             (TokenType::RParen, ")"),
             (TokenType::LBrace, "{"),
+            (TokenType::Identifier, "x"),
+            (TokenType::Plus, "+"),
+            (TokenType::Identifier, "y"),
+            (TokenType::Semicolon, ";"),
             (TokenType::RBrace, "}"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Let, "let"),
+            (TokenType::Identifier, "result"),
+            (TokenType::Assign, "="),
+            (TokenType::Identifier, "add"),
+            (TokenType::LParen, "("),
+            (TokenType::Identifier, "five"),
             (TokenType::Comma, ","),
+            (TokenType::Identifier, "ten"),
+            (TokenType::RParen, ")"),
             (TokenType::Semicolon, ";"),
             (TokenType::Eof, ""),
         ];

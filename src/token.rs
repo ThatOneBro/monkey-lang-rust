@@ -4,7 +4,7 @@ pub enum TokenType {
     Eof,
 
     // Identifiers, literals
-    Ident,
+    Identifier,
     Int,
 
     // Operators
@@ -43,5 +43,13 @@ impl Token {
             token_type,
             literal: ch.to_string(),
         }
+    }
+}
+
+pub fn check_identifier_or_keyword(candidate: &str) -> TokenType {
+    match candidate {
+        "fn" => TokenType::Function,
+        "let" => TokenType::Let,
+        _ => TokenType::Identifier,
     }
 }
