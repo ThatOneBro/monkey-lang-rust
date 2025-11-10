@@ -112,6 +112,12 @@ let add = fn(x, y) {
 let result = add(five, ten);
 !-/*5;
 5 < 10 > 5;
+
+if (5 < 10) {
+    return true;
+} else {
+    return false;
+}
 "#;
 
         let tests = vec![
@@ -163,6 +169,23 @@ let result = add(five, ten);
             (TokenType::Gt, ">"),
             (TokenType::Int, "5"),
             (TokenType::Semicolon, ";"),
+            (TokenType::If, "if"),
+            (TokenType::LParen, "("),
+            (TokenType::Int, "5"),
+            (TokenType::Lt, "<"),
+            (TokenType::Int, "10"),
+            (TokenType::RParen, ")"),
+            (TokenType::LBrace, "{"),
+            (TokenType::Return, "return"),
+            (TokenType::True, "true"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::RBrace, "}"),
+            (TokenType::Else, "else"),
+            (TokenType::LBrace, "{"),
+            (TokenType::Return, "return"),
+            (TokenType::False, "false"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::RBrace, "}"),
             (TokenType::Eof, ""),
         ];
 
