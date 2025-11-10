@@ -1,5 +1,6 @@
 use crate::token::{Token, get_identifier_or_keyword};
 
+#[derive(Debug, Clone, Copy)]
 pub struct Lexer<'a> {
     input: &'a [u8],
     pos: usize,
