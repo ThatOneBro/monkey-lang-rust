@@ -18,18 +18,25 @@ impl Expression<'_> {
 #[derive(Debug, Clone)]
 pub enum Statement<'src> {
     Let(LetStmt<'src>),
+    Return(ReturnStmt<'src>),
 }
 
 #[derive(Debug, Clone)]
 pub struct LetStmt<'src> {
     pub name: Token<'src>,
-    pub init: Option<Expression<'src>>,
+    pub expr: Option<Expression<'src>>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ReturnStmt<'src> {
+    pub expr: Option<Expression<'src>>,
 }
 
 impl Statement<'_> {
     pub fn token_literal(&self) -> &str {
         match self {
             Statement::Let(_) => "let",
+            Statement::Return(_) => "return",
         }
     }
 }
